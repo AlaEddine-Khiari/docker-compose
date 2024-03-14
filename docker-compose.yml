@@ -1,0 +1,47 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+
+  sip-add:
+    image: alaeddinekh/sip-add
+    container_name: sip_add_container
+    restart: unless-stopped
+    environment:
+      - DB_NAME=odoo
+      - DB_USER=odoo
+      - DB_PASSWORD=odoo
+      - DB_HOST=postgres
+      - DB_PORT=5432
+    volumes:
+      - /home/vagrant/Asterisk/sip.conf:/app/sip.conf
+      - /home/vagrant/Asterisk/voicemail.conf:/app/voicemail.conf
+    ports:
+      - "5000:5000"
+
+  asterisk:
+    image: alaeddinekh/asterisk-image
+    container_name: asterisk_container
+    ports:
+      - "5060:5060/udp"
+      - "8088:8088/tcp"
+      - "5038:5038/tcp"
+    volumes:
+      - /home/vagrant/Asterisk/voicemail.conf:/etc/asterisk/voicemail.conf
+      - /home/vagrant/Asterisk/sip.conf:/etc/asterisk/sip.conf
+    network_mode: host
+
+  odoo:
+    image: odoo:14
+    container_name: odoo_container
+    restart: unless-stopped
+    ports:
+      - "8069:8069"
+    volumes:
+      - /home/vagrant/Asterisk/custom:/mnt/extra-addons
+    links:
+      - postgres:db
