@@ -11,9 +11,24 @@ services:
     ports:
       - "5432:5432"
 
+  asterisk:
+    image: alaeddinekh/asterisk-image
+    container_name: asterisk_container
+    ports:
+      - "5060:5060/udp"
+      - "8088:8088/tcp"
+      - "5038:5038/tcp"
+    volumes:
+      - /home/vagrant/Asterisk/voicemail.conf:/etc/asterisk/voicemail.conf
+      - /home/vagrant/Asterisk/sip.conf:/etc/asterisk/sip.conf
+    network_mode: host
+
   sip-add:
     image: alaeddinekh/sip-add
     container_name: sip_add_container
+    depends_on:            
+      - postgres
+      - asterisk
     restart: unless-stopped
     environment:
       - DB_NAME=odoo
@@ -26,18 +41,6 @@ services:
       - /home/vagrant/Asterisk/voicemail.conf:/app/voicemail.conf
     ports:
       - "5000:5000"
-
-  asterisk:
-    image: alaeddinekh/asterisk-image
-    container_name: asterisk_container
-    ports:
-      - "5060:5060/udp"
-      - "8088:8088/tcp"
-      - "5038:5038/tcp"
-    volumes:
-      - /home/vagrant/Asterisk/voicemail.conf:/etc/asterisk/voicemail.conf
-      - /home/vagrant/Asterisk/sip.conf:/etc/asterisk/sip.conf
-    network_mode: host
 
   odoo:
     image: odoo:14
