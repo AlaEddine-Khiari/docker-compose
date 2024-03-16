@@ -14,6 +14,7 @@ services:
   asterisk:
     image: alaeddinekh/asterisk-image
     container_name: asterisk_container
+    restart: unless-stopped
     ports:
       - "5060:5060/udp"
       - "8088:8088/tcp"
@@ -33,7 +34,6 @@ services:
       - db
       - asterisk
       - odoo
-    restart: unless-stopped
     environment:
       - DB_NAME=odoo
       - DB_USER=odoo
@@ -54,14 +54,13 @@ services:
       - db
       - asterisk
       - odoo
-    restart: unless-stopped
     environment:
       - DB_NAME=odoo
       - DB_USER=odoo
       - DB_PASSWORD=odoo
       - DB_HOST=db
       - DB_PORT=5432
-     volumes:
+    volumes:
       - asterisk_recordings:/app/recordings
       - asterisk_logs:/app
   
@@ -79,3 +78,8 @@ services:
       - PASSWORD=odoo
     volumes:
       - /custom:/mnt/extra-addons
+
+volumes:
+  asterisk_logs:
+  asterisk_recordings:
+
