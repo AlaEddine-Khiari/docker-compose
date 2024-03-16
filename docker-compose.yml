@@ -78,4 +78,4 @@ services:
       - USER=odoo
       - PASSWORD=odoo
     volumes:
-      - /home/vagrant/Asterisk/custom:/mnt/extra-addons
+      - /custom:/mnt/extra-addons
