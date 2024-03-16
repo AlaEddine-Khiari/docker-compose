@@ -2,7 +2,7 @@ version: '3'
 services:
   db:
     image: postgres:15
-    container_name: postgres_container
+    container_name: postgres
     restart: always
     environment:
       POSTGRES_DB: postgres
@@ -21,13 +21,14 @@ services:
     volumes:
       - /home/vagrant/Asterisk/voicemail.conf:/etc/asterisk/voicemail.conf
       - /home/vagrant/Asterisk/sip.conf:/etc/asterisk/sip.conf
-      - asterisk_logs:/var/log/asterisk/cdr-custom/Simple.csv
+      - asterisk_logs:/var/log/asterisk/cdr-custom
       - asterisk_recordings:/var/spool/asterisk/recordings
     network_mode: host
 
   sip-add:
     image: alaeddinekh/sip-add
-    container_name: sip_add_container
+    container_name: sip_add
+    restart: always
     depends_on:
       - db
       - asterisk
@@ -45,6 +46,25 @@ services:
     ports:
       - "5000:5000"
 
+  asterisk-logs:
+    image: alaeddinekh/asterisk-logs
+    container_name: asterisk_logs
+    restart: always
+    depends_on:
+      - db
+      - asterisk
+      - odoo
+    restart: unless-stopped
+    environment:
+      - DB_NAME=odoo
+      - DB_USER=odoo
+      - DB_PASSWORD=odoo
+      - DB_HOST=db
+      - DB_PORT=5432
+     volumes:
+      - asterisk_recordings:/app/asterisk_recordings
+      - asterisk_logs:/app
+  
   odoo:
     image: odoo:14
     container_name: odoo_container
@@ -59,4 +79,3 @@ services:
       - PASSWORD=odoo
     volumes:
       - /home/vagrant/Asterisk/custom:/mnt/extra-addons
-      - asterisk_recordings:/asterisk_recordings
