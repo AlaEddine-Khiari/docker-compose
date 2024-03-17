@@ -23,7 +23,7 @@ services:
       - /home/vagrant/Asterisk/voicemail.conf:/etc/asterisk/voicemail.conf
       - /home/vagrant/Asterisk/sip.conf:/etc/asterisk/sip.conf
       - asterisk_logs:/var/log/asterisk/cdr-custom
-      - asterisk_recordings:/var/spool/asterisk/recordings
+      - asterisk_recordings:/var/spool/asterisk/recording
     network_mode: host
 
   sip-add:
@@ -62,8 +62,8 @@ services:
       - DB_PORT=5432
     volumes:
       - asterisk_recordings:/ext/recordings
-      - asterisk_logs:/ext/.
-  
+      - asterisk_logs:/ext
+
   odoo:
     image: odoo:14
     container_name: odoo_container
@@ -82,4 +82,3 @@ services:
 volumes:
   asterisk_logs:
   asterisk_recordings:
-
