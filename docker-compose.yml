@@ -61,8 +61,8 @@ services:
       - DB_HOST=db
       - DB_PORT=5432
     volumes:
-      - asterisk_recordings:/app/recordings
-      - asterisk_logs:/app
+      - asterisk_recordings:/ext/recordings
+      - asterisk_logs:/ext/.
   
   odoo:
     image: odoo:14
